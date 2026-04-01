@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WealthNova 🚀</title>
+  <meta charset="UTF-8">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      width: 300px;
+      backdrop-filter: blur(10px);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #00ff99;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>WealthNova 🚀</h2>
+
+  <input id="name" placeholder="Your Name">
+  <input id="income" placeholder="Monthly Income">
+  <input id="expenses" placeholder="Monthly Expenses">
+
+  <button onclick="generate()">Generate Premium Card</button>
+</div>
+
+<script>
+function generate() {
+  const name = document.getElementById("name").value;
+  const income = document.getElementById("income").value;
+  const expenses = document.getElementById("expenses").value;
+
+  const savings = income - expenses;
+
+  const newWindow = window.open("", "_blank");
+
+  newWindow.document.write(`
+    <html>
+    <body style="font-family: Arial; text-align:center; background:#111; color:white; padding:50px;">
+      <h1>WealthNova Report 🚀</h1>
+      <h2>${name}</h2>
+      <p>Income: ₹${income}</p>
+      <p>Expenses: ₹${expenses}</p>
+      <p><b>Savings: ₹${savings}</b></p>
+
+      <button onclick="window.print()">Download PDF</button>
+    </body>
+    </html>
+  `);
+}
+</script>
+
+</body>
+</html>
