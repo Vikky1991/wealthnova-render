@@ -1,99 +1,110 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>WealthNova</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-      padding: 40px;
-    }
-
-    .card {
-      background: linear-gradient(135deg,#1e293b,#020617);
-      padding: 25px;
-      border-radius: 15px;
-      max-width: 350px;
-      margin: auto;
-      margin-bottom: 20px;
-    }
-
-    button {
-      padding: 12px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .share { background:#22c55e; }
-    .pdf { background:#3b82f6; }
-  </style>
-</head>
-
-<body>
-
-<h1>WealthNova 🚀</h1>
-
-<div class="card">
-  <h3 id="name"></h3>
-  <p id="income"></p>
-  <p id="expenses"></p>
-  <p id="savings"></p>
-</div>
-
-<button class="share" onclick="shareCard()">📤 Share Card</button>
-<button class="pdf" onclick="downloadPDF()">📄 Download PDF</button>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
 
 <script>
-const userData = {
-  name: "Vikrant",
-  income: 50000,
-  expenses: 30000
-};
+function generate() {
+  const name = document.getElementById("name").value;
+  const income = document.getElementById("income").value;
+  const expenses = document.getElementById("expenses").value;
 
-userData.savings = userData.income - userData.expenses;
+  const savings = income - expenses;
 
-document.getElementById("name").innerText = userData.name + "'s Report";
-document.getElementById("income").innerText = "Income: ₹" + userData.income;
-document.getElementById("expenses").innerText = "Expenses: ₹" + userData.expenses;
-document.getElementById("savings").innerText = "Savings: ₹" + userData.savings;
+  const newWindow = window.open("", "_blank");
 
-async function shareCard() {
-  const res = await fetch("/generate-image", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(userData)
-  });
+  newWindow.document.write(`
+    <html>
+    <head>
+      <style>
+        body {
+          margin:0;
+          font-family: Arial;
+          background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
+          color:white;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          height:100vh;
+        }
 
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
+        .card {
+          width: 350px;
+          padding: 25px;
+          border-radius: 20px;
+          background: linear-gradient(145deg, #1e3c72, #2a5298);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+          text-align:center;
+        }
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "wealth-card.png";
-  a.click();
-}
+        h1 {
+          margin-bottom: 10px;
+        }
 
-async function downloadPDF() {
-  const res = await fetch("/generate-pdf", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(userData)
-  });
+        .highlight {
+          font-size: 22px;
+          margin: 10px 0;
+          font-weight: bold;
+          color: #00ffcc;
+        }
 
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
+        button {
+          margin-top: 15px;
+          padding: 10px;
+          width: 100%;
+          border-radius: 10px;
+          border:none;
+          background:#00ff99;
+          cursor:pointer;
+          font-weight:bold;
+        }
+      </style>
+    </head>
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "wealth-report.pdf";
-  a.click();
+    <body>
+
+      <div id="card" class="card">
+        <h1>WealthNova 🚀</h1>
+        <p>${name}</p>
+
+        <div>Income: ₹${income}</div>
+        <div>Expenses: ₹${expenses}</div>
+
+        <div class="highlight">
+          Savings: ₹${savings}
+        </div>
+
+        <p style="opacity:0.7;">Your financial snapshot 📊</p>
+      </div>
+
+      <button onclick="download()">Download Card</button>
+      <button onclick="share()">Share</button>
+
+      <script src="https://cdn.jsdelivr.net/npm/html2canvas"><\/script>
+
+      <script>
+        function download() {
+          html2canvas(document.getElementById("card")).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "wealthnova-card.png";
+            link.href = canvas.toDataURL();
+            link.click();
+          });
+        }
+
+        function share() {
+          html2canvas(document.getElementById("card")).then(canvas => {
+            const image = canvas.toDataURL();
+
+            const a = document.createElement("a");
+            a.href = image;
+            a.download = "share.png";
+            a.click();
+
+            alert("Image downloaded! Now share it on WhatsApp 🚀");
+          });
+        }
+      <\/script>
+
+    </body>
+    </html>
+  `);
 }
 </script>
-
-</body>
-</html>
