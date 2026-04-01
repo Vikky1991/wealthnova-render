@@ -8,49 +8,92 @@
       color: white;
       font-family: Arial;
       text-align: center;
-      padding: 50px;
+      padding: 40px;
     }
 
-    h1 {
-      font-size: 40px;
+    .card {
+      background: linear-gradient(135deg,#1e293b,#020617);
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 350px;
+      margin: auto;
       margin-bottom: 20px;
-    }
-
-    input {
-      padding: 10px;
-      margin: 10px;
-      width: 200px;
-      border-radius: 5px;
-      border: none;
     }
 
     button {
       padding: 12px 20px;
-      background: #22c55e;
-      color: black;
+      margin: 10px;
       border: none;
-      border-radius: 5px;
-      font-weight: bold;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    button:hover {
-      background: #16a34a;
-    }
+    .share { background:#22c55e; }
+    .pdf { background:#3b82f6; }
   </style>
 </head>
 
 <body>
 
-  <h1>WealthNova 🚀</h1>
+<h1>WealthNova 🚀</h1>
 
-  <p>Enter your details:</p>
+<div class="card">
+  <h3 id="name"></h3>
+  <p id="income"></p>
+  <p id="expenses"></p>
+  <p id="savings"></p>
+</div>
 
-  <input type="text" placeholder="Your Name"><br>
-  <input type="number" placeholder="Monthly Income"><br>
-  <input type="number" placeholder="Monthly Expenses"><br>
+<button class="share" onclick="shareCard()">📤 Share Card</button>
+<button class="pdf" onclick="downloadPDF()">📄 Download PDF</button>
 
-  <button>Generate Report</button>
+<script>
+const userData = {
+  name: "Vikrant",
+  income: 50000,
+  expenses: 30000
+};
+
+userData.savings = userData.income - userData.expenses;
+
+document.getElementById("name").innerText = userData.name + "'s Report";
+document.getElementById("income").innerText = "Income: ₹" + userData.income;
+document.getElementById("expenses").innerText = "Expenses: ₹" + userData.expenses;
+document.getElementById("savings").innerText = "Savings: ₹" + userData.savings;
+
+async function shareCard() {
+  const res = await fetch("/generate-image", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(userData)
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "wealth-card.png";
+  a.click();
+}
+
+async function downloadPDF() {
+  const res = await fetch("/generate-pdf", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(userData)
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "wealth-report.pdf";
+  a.click();
+}
+</script>
 
 </body>
 </html>
